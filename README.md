@@ -215,6 +215,8 @@ int rob(vector<int>& nums) {
     */
 ```
 >  Space Optimization *IMPORTANT*
+
+
 for all the cur element we requried only dp[i-1] and dp[i-2] menas two variable requred 
 ```cpp
  int rob(vector<int>& nums) {
@@ -233,4 +235,68 @@ for all the cur element we requried only dp[i-1] and dp[i-2] menas two variable 
         return cur;
     }
 ```
+> # House Robber II
+![](./img/House%20Robber%20II.png)
+
+approch --> in b/w we calculate the ans one time from index 1 to last and one time 
+from index 0 to last -1;
+```cpp
+// solve robber house -1 problem
+  int solve(vector<int>& nums1) {
+        int pre = nums1[0];
+        int pre2 = 0;
+        int cur = nums1[0];
+
+        for (int i = 1; i < nums1.size(); i++) {
+            int take = nums1[i] + pre2;
+            int notTake = pre; // 0 + pre
+            cur = max(take, notTake);
+            pre2 = pre;
+            pre = cur;
+        }
+
+        return cur;
+    }
+    int rob(vector<int>& nums) {
+        // first and last will not take togater
+        if (nums.size() > 1) {
+            vector<int> num1(nums.begin() + 1, nums.end()); // excepts  nums[0] element
+            vector<int> num2(nums.begin(), nums.end() - 1); // except nums[n-1] element
+
+            int ans1 = solve(num1);
+            int ans2 = solve(num2);
+            return max(ans1, ans2);
+        }
+        return nums[0];
+    }
+```
+> most space optimize approch
+```cpp
+ int solve(vector<int>& nums1, int st, int end) {
+        int pre = nums1[st];
+        int pre2 = 0;
+        int cur = nums1[st];
+
+        for (int i = st + 1; i < end; i++) {
+            int take = nums1[i] + pre2;
+            int notTake = pre; // 0 + pre
+            cur = max(take, notTake);
+            pre2 = pre;
+            pre = cur;
+        }
+
+        return cur;
+    }
+    int rob(vector<int>& nums) {
+        // first and last will not take togater
+        int n = nums.size();
+        if (nums.size() > 1) {
+            int ans1 = solve(nums, 0, n - 1);
+            int ans2 = solve(nums, 1, n);
+            return max(ans1, ans2);
+        }
+        return nums[0];
+    }
+```
+
 
