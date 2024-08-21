@@ -137,6 +137,7 @@ int solve(vector<int>& coins, vector<int>& dp, int n) {
     }
 ```
 > #  House Robber 
+![](./img/House%20Robber.png)
 approch --> one time include the ans and one time exclude the ans  
            when include the ans then call for the (index +1), when we include the ans than call for hte (ind+2)
     
