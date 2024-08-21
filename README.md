@@ -140,6 +140,96 @@ int solve(vector<int>& coins, vector<int>& dp, int n) {
 approch --> one time include the ans and one time exclude the ans  
            when include the ans then call for the (index +1), when we include the ans than call for hte (ind+2)
     
-### Recursive approch --- *Time Limit Exceeded*
+>  Recursive approch --- *Time Limit Exceeded*
 
 ```cpp
+int solve(int n, int index, vector<int>& nums) {
+        if (index >= n) return 0;
+        // include
+        int inc = nums[index] + solve(n, index + 2, nums);
+        // exclude
+        int exc = solve(n, index + 1, nums);
+        return max(inc, exc);
+    }
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        return solve(n, 0, nums);
+    }
+```
+> Top down approch
+```cpp
+ int solve(int n, int index, vector<int>& nums, vector<int>& dp) {
+        if (index >= n) return 0;
+        if (dp[index] != -1)return dp[index];
+        // include
+        int inc = nums[index] + solve(n, index + 2, nums, dp);
+        // exclude
+        int exc = solve(n, index + 1, nums, dp);
+        return dp[index] = max(inc, exc);
+    }
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dp(n + 1, -1);
+        return solve(n, 0, nums, dp);
+    }
+```
+> Bottom down approch --*Good approch*
+
+```cpp
+int rob(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dp(n + 1, -1);
+
+        dp[0] = nums[0];
+        if (n > 1) { // when n ==1 give error for excesing the nums[1]
+            dp[1] = max(nums[0], nums[1]);
+            for (int i = 2; i < n; i++) {
+                int inc = nums[i] + dp[i - 2];
+                int exc = dp[i - 1];
+                dp[i] = max(inc, exc);
+            }
+        }
+        return dp[n - 1];
+    }
+    //or 
+/*
+
+int rob(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dp(n + 1, -1);
+
+        dp[0] = nums[0];
+        for (int i = 1; i < n; i++) {
+            int inc = nums[i];
+            if (i > 1) inc += dp[i - 2];
+
+            int exc = dp[i - 1];
+
+            dp[i] = max(inc, exc);
+        }
+
+        return dp[n - 1];
+    }
+
+    */
+```
+>  Space Optimization *IMPORTANT*
+for all the cur element we requried only dp[i-1] and dp[i-2] menas two variable requred 
+```cpp
+ int rob(vector<int>& nums) {
+        // . . . . pre2 pre cur . . . . for any cur = max(pre , pre1) only two prev variable required
+        int pre = nums[0];
+        int pre2 = 0;
+        int cur = nums[0];
+
+        for (int i = 1; i < nums.size(); i++) {
+            int take = nums[i] + pre2;
+            int notTake = pre; // 0 + pre
+            cur = max(take, notTake);
+            pre2 = pre;
+            pre = cur;
+        }
+        return cur;
+    }
+```
+
