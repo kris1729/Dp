@@ -65,6 +65,67 @@ int fib(int n) {
         return cur;
     }
 ```
+> # Climbing Stairs
+![](./img/Climbing%20Stairs.png)
+
+it is like fibo serise 1,2,3,5,...
+
+> Recursion code *Time LIMT EXeed* 
+```cpp
+ int solve(int n) {
+        if (n <= 2)
+            return n;
+        int ans = solve(n - 1) + solve(n - 2);
+        return ans;
+    }
+    int climbStairs(int n) {
+        int ans = solve(n);
+        return ans;
+    }
+```
+> using memozation , top down approch
+```cpp
+int solve(int n,vector<int>&dp) {
+        if (n <= 2)
+            return n;
+            if(dp[n]!=-1)return dp[n];
+        return dp[n] = solve(n - 1,dp) + solve(n - 2,dp);
+    }
+    int climbStairs(int n) {
+        vector<int>dp(n+1,-1);
+        int ans = solve(n,dp);
+        return ans;
+    }
+```
+> using bottom up approch (tabulation )
+```cpp
+ int climbStairs(int n) {
+        vector<int> dp(n + 1, -1);
+        dp[0] = 1, dp[1] = 2;
+        for (int i = 2; i < n; i++)
+            dp[i] = dp[i - 2] + dp[i - 1];
+        return dp[n - 1];
+    }
+```
+> using most optimize approch *best solution*
+```cpp
+ int climbStairs(int n) {
+        if (n <= 2)
+            return n;
+            
+        int pre1 = 1;
+        int pre = 2;
+        int cur = 0;
+        for (int i = 2; i < n; i++) {
+            cur = pre1 + pre;
+            pre1 = pre;
+            pre = cur;
+        }
+        return cur;
+    }
+```
+
+
 > # Coin Change # important problem
 ![](./img/Coin%20Change.png)
 approch, we will try to find the spacific amount of monney using all possible coins , 
