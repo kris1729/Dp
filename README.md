@@ -124,6 +124,69 @@ int solve(int n,vector<int>&dp) {
         return cur;
     }
 ```
+> # Min Cost Climbing Stairs
+![](./img/Min%20Cost%20Climbing%20Stairs.png)
+
+> using recursion approch wiil give *TLE*
+```cpp
+ int solve(vector<int>& cost, int i, int n) {
+        if (i >= n) return 0;
+        int ans = cost[i];
+        ans += min(solve(cost, i + 2, n), solve(cost, i + 1, n));
+        return ans;
+    }
+    int minCostClimbingStairs(vector<int>& cost) {
+        int n = cost.size();
+        int ans1 = solve(cost, 0, n);
+        int ans2 = solve(cost, 1, n);
+        return min(ans1, ans2);
+    }
+```
+> using top down approch
+```cpp
+ int solve(vector<int>& cost, int i, int n, vector<int>& dp) {
+        if (i >= n) return 0;
+        if (dp[i] != -1) return dp[i];
+        int ans = cost[i];
+        ans += min(solve(cost, i + 2, n, dp), solve(cost, i + 1, n, dp));
+        return dp[i] = ans;
+    }
+    int minCostClimbingStairs(vector<int>& cost) {
+        int n = cost.size();
+        vector<int> dp(n + 1, -1);
+        int ans1 = solve(cost, 0, n, dp);
+        int ans2 = solve(cost, 1, n, dp);
+        return min(ans1, ans2);
+    }
+```
+> bottom up approch
+```cpp
+ int minCostClimbingStairs(vector<int>& cost) {
+        int n = cost.size();
+        vector<int> dp(n + 1, -1);
+        dp[0] = cost[0], dp[1] = cost[1];
+
+        for (int i = 2; i < n; i++) {
+            dp[i] = cost[i] + min(dp[i - 1], dp[i - 2]);
+        }
+        return min(dp[n - 1], dp[n - 2]);
+    }
+```
+> using space optimization *best solution*
+```cpp
+ int minCostClimbingStairs(vector<int>& cost) {
+        int n = cost.size();
+        vector<int> dp(n + 1, -1);
+        int pre2 = cost[0], pre = cost[1], cur;
+
+        for (int i = 2; i < n; i++) {
+            cur = cost[i] + min(pre, pre2);
+            pre2 = pre;
+            pre = cur;
+        }
+        return min(pre2, pre);
+    }
+```
 
 
 > # Coin Change # important problem
