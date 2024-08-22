@@ -514,3 +514,87 @@ long long solve(long long  n, long long   k,vector<long long >&dp)
        return pre; 
     }
 ```
+
+> # Ninja’s Training
+![](./img/Ninja’s%20Training-1.png)
+![](./img/Ninja’s%20Training-2.png)
+ its is  2d dp problem 
+ Approch - > each time we select one , if select 0 then next time we will select 1 or 2 which give the max ans
+ 
+ > solve using recursion *TLE*
+ ```cpp
+ int solve(int ind , int n , int day ,vector<vector<int>> &points){
+   if(day>=n) return 0;
+   int ans = points[day][ind];
+   int ind1 = (ind+1)%3; // if {ind = 0 than ind1 =1,ind2 =2 } if {ind = 1 than ind1 =2,ind2 = 0} 
+   int ind2 = (ind+2)%3; // if(ind = 2 than ind1 =1 , ind2 = 0)
+   ans += max(solve(ind1 , n , day+1,points) , solve(ind2, n,day+1,points));
+   return ans;
+}
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+   int ans = solve(0,n,0,points);
+    int ans1 = solve(1,n,0,points);
+    int ans2 = solve(2,n,0,points);
+return max(ans,max(ans1,ans2));
+}
+```
+> solve using Top down approch
+
+
+change recursion code into top down approch
+```cpp
+
+int solve(int ind , int n , int day ,vector<vector<int>> &points,   vector<vector<int>>&dp){
+    if(day>=n) return 0;
+    if(dp[day][ind]!=-1)return dp[day][ind];
+   int ans = points[day][ind];
+   int ind1 = (ind+1)%3;
+   int ind2 = (ind+2)%3;
+   ans += max(solve(ind1 , n , day+1,points,dp) , solve(ind2, n,day+1,points,dp));
+   return dp[day][ind]=ans;
+}
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+    vector<vector<int>>dp(n,vector<int>(3,-1));
+   int ans = solve(0,n,0,points,dp);
+    int ans1 = solve(1,n,0,points,dp);
+    int ans2 = solve(2,n,0,points,dp);
+return max(ans,max(ans1,ans2));
+}
+```
+> solve using Bottom up approch *IMPORTANT*
+```cpp
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+   vector<vector<int>>dp(n,vector<int>(3,-1));
+   dp[0][0] = points[0][0],dp[0][1] = points[0][1],dp[0][2] = points[0][2];
+
+   for(int i =1;i<n;i++){
+      
+       dp[i][0] = points[i][0] + max(dp[i-1][1],dp[i-1][2]); // select first training
+       dp[i][1] = points[i][1] + max(dp[i-1][0],dp[i-1][2]); // select second training
+       dp[i][2] = points[i][2] + max(dp[i-1][0],dp[i-1][1]); // select third training
+   }
+ return max(dp[n-1][0],max(dp[n-1][1],dp[n-1][2]));
+}
+```
+> ### space optimize *best solution*
+
+```cpp
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+   vector<vector<int>>dp(n,vector<int>(3,-1));
+   int pre0 = points[0][0],pre1 = points[0][1],pre2 = points[0][2];
+   
+   for(int i =1;i<n;i++){
+       int cur0 = points[i][0] + max(pre1,pre2);
+      int  cur1 = points[i][1] + max(pre2,pre0);
+      int  cur2 = points[i][2] + max(pre0,pre1);
+       pre0 = cur0;
+       pre1 = cur1;
+       pre2 = cur2;
+   }
+ return max(pre0,max(pre1,pre2));
+}
+```
