@@ -187,6 +187,73 @@ int solve(int n,vector<int>&dp) {
         return min(pre2, pre);
     }
 ```
+> # Frog Jump
+![](./img/Frog%20Jump-1.png)
+![](./img/Frog%20Jump-2.png)
+approch , at any index first we will take the abs(pre-cur) and , solve for two case one for (i+1)th jump and other for
+(i+2)Th jump
+
+> recrusive solution *TLE*
+```cpp
+int solve(int i , int n , vector<int>&height,vector<int>&dp){
+  if(i>=n-1)return abs(height[n-1]-height[i]);
+  if(dp[i]!=-1)return dp[i];
+  int ans = abs(height[i+2]-height[i]) + solve(i+2,n,height,dp);
+  int ans1 = abs(height[i+1]-height[i])+ solve(i+1,n,height,dp);
+  return dp[i] =  min(ans ,ans1);
+} 
+int frogJump(int n, vector<int> &heights)
+{
+  vector<int>dp(n+1,-1);
+ return  solve(0,n,heights,dp);
+   
+}
+```
+> Top down Approch  convert the recursion code into top down
+
+```cpp
+int solve(int i , int n , vector<int>&height,vector<int>&dp){
+  if(i>=n-1)return abs(height[n-1]-height[i]);
+  if(dp[i]!=-1)return dp[i];
+  int ans = abs(height[i+2]-height[i]) + solve(i+2,n,height,dp);
+  int ans1 = abs(height[i+1]-height[i])+ solve(i+1,n,height,dp);
+  return dp[i] =  min(ans ,ans1);
+} 
+int frogJump(int n, vector<int> &heights)
+{
+  vector<int>dp(n+1,-1);
+ return  solve(0,n,heights,dp);
+   
+}
+```
+> using bottom up approch 
+```cpp
+int frogJump(int n, vector<int> &arr) {
+  vector<int> dp(n + 1, -1);
+  dp[0] = 0 ,dp[1] =  abs(arr[0]-arr[1]);
+    for(int i =2;i<n;i++){
+      int ans1  = abs(arr[i]-arr[i-1]) + dp[i-1];
+      int ans2 = abs(arr[i]-arr[i-2]) + dp[i-2];
+      dp[i] = min(ans1 ,ans2); 
+    }
+    return dp[n-1];
+}
+```
+> Space optimize *best solution*
+```cpp
+int frogJump(int n, vector<int> &arr) {
+  
+  int pre1 = 0 , pre=  abs(arr[0]-arr[1]);
+    for(int i =2;i<n;i++){
+      int ans1  = abs(arr[i]-arr[i-1]) + pre;
+      int ans2 = abs(arr[i]-arr[i-2]) + pre1;
+     int cur = min(ans1 ,ans2); 
+     pre1 = pre;
+     pre = cur;
+    }
+    return pre;
+}
+```
 
 
 > # Coin Change # important problem
