@@ -423,4 +423,94 @@ from index 0 to last -1;
     }
 ```
 
+> # Painting the Fence 
+![](./img/Painting%20the%20Fence.png)
 
+approch ---- when 2 adsent is same + when 2 adsent is diff..
+
+
+n =0 way is 0
+
+n = 1             |   n = 2     |   n = 3  |     n = 4
+                  |             |          |
+same-  0          |  k          |   t1*k-1 |    t2*k-1
+same-  k          |  t1*(k-1)   |   t2*k-1 |    t3*k-1
+                  |             |          |
+total  k          |   t2        |   t3     |     t4
+
+> Recursion solution *TLE*
+```cpp
+long long solve(int n, int k)
+{
+    
+    if (n == 1)
+        return k;
+    if (n == 2)
+        return k + k * (k - 1) ; // k*K 
+    int same = solve(n - 2, k) * (k - 1); // t1*(k-1)
+    int diff = solve(n - 1, k) * (k - 1);  // t2*(k-1)
+    return (same + diff);
+}
+
+    long long countWays(int n, int k){
+        
+        long long int ans = solve(n,k);
+        return ans;
+    }
+```
+> TOP down approch 
+note - in the solve function send the value of n and k in long long form
+
+```cpp
+int MOD = 1e9 + 7;
+// solve function
+long long solve(long long  n, long long   k,vector<long long >&dp)
+{
+    
+    if (n == 1)
+        return k%MOD;
+    if (n == 2)
+        return (k + k * (k - 1))%MOD; 
+    if(dp[n]!=-1)return dp[n];
+    long long  same = (solve(n - 2, k,dp) * (k - 1))%MOD;
+    long long  diff = (solve(n - 1, k,dp) * (k - 1))%MOD;
+    return dp[n] = (same + diff)%MOD;
+}
+// main function 
+    long long countWays(int n, int k){
+        vector<long long > dp(n+1,-1);
+        long long  ans = solve(n,k,dp);
+        return ans;
+}
+
+```
+> Bottom UP APPROCH
+```cpp
+ long long countWays(int n, int k){
+       vector<long long > dp(n+1,-1);
+       long long  K =k;
+       int mod = 1e9+7;
+       dp[1] = K%mod;
+       dp[2] = K*K%mod;
+       for(int i =3 ; i<=n;i++){
+           dp[i] = ((K-1)*(dp[i-2]+dp[i-1]))%mod;
+       }
+       return dp[n]; 
+    }
+```
+> space optimize approch
+```cpp
+ long long countWays(int n, int k){
+       vector<long long > dp(n+1,-1);
+       long long  K =k;
+       int mod = 1e9+7;
+       long long pre2 = K%mod;
+       long long pre = K*K%mod;
+       for(int i =3 ; i<=n;i++){
+           long long cur = ((K-1)*(pre2+pre))%mod;
+           pre2 = pre;
+           pre = cur;
+       }
+       return pre; 
+    }
+```
