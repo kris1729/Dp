@@ -584,17 +584,15 @@ int ninjaTraining(int n, vector<vector<int>> &points)
 ```cpp
 int ninjaTraining(int n, vector<vector<int>> &points)
 {
-   vector<vector<int>>dp(n,vector<int>(3,-1));
-   int pre0 = points[0][0],pre1 = points[0][1],pre2 = points[0][2];
-   
-   for(int i =1;i<n;i++){
-       int cur0 = points[i][0] + max(pre1,pre2);
-      int  cur1 = points[i][1] + max(pre2,pre0);
-      int  cur2 = points[i][2] + max(pre0,pre1);
-       pre0 = cur0;
-       pre1 = cur1;
-       pre2 = cur2;
-   }
- return max(pre0,max(pre1,pre2));
+    int pre0 = points[0][0],pre1 = points[0][1] , pre2 = points[0][2];
+    for(int i =1;i<n;i++){
+        int cur0 = points[i][0] + max(pre1,pre2);
+        int cur1 = points[i][1] + max(pre0,pre2);
+        int cur2 = points[i][2] + max(pre0,pre1);
+        pre0 = cur0;
+        pre1 = cur1;
+        pre2 = cur2;
+    }
+    return max(pre0,max(pre1,pre2));   
 }
 ```
