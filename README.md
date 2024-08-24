@@ -673,55 +673,167 @@ Approch -> start from the end point ans go to the first (0,0) point for
 > recursion solution "Time limit exceeded"
 
 ```cpp
-int solve(int i, int j){
-	if(i==0&&j==0)return 1;
-	if(i<0||j<0)return 0;
-	int left = solve(i-1,j);
-	int top = solve(i,j-1);
-	return left + top;
-}
+int solve(int i , int j){
+  if(i==0&&j==0)return 1;
+  if(i<0||j<0)return 0;
+  int left = solve(i, j-1);
+  int up = solve(i-1,j);
+  return left + up;
 
+}
 int uniquePaths(int m, int n) {
-	return solve(m-1,n-1);
+ return solve(m-1,n-1);
 }
 ```
 > Top down Approch 
 
 ```cpp
-int solve(int i, int j,vector<vector<int>>&dp){
-	if(i==0&&j==0)return 1;
-	if(i<0||j<0)return 0;
-	if(dp[i][j]!=-1)return dp[i][j];
-	int left = solve(i-1,j,dp);
-	int top = solve(i,j-1,dp);
-	return dp[i][j] = left + top;
-}
+int solve(int i , int j,vector<vector<int>>&dp){
+  if(i==0&&j==0)return 1;
+  if(i<0||j<0)return 0;
+  if(dp[i][j]!=-1)return dp[i][j];
+  int left = solve(i, j-1,dp);
+  int up = solve(i-1,j,dp);
+  return dp[i][j] =  left + up;
 
+}
 int uniquePaths(int m, int n) {
-	vector<vector<int>>dp(m,vector<int>(n,-1));
-	return solve(m-1,n-1,dp);
+  vector<vector<int>>dp(m,vector<int>(n,-1));
+    return  solve(m-1,n-1,dp);
 }
 ```
 > using Bottom up Approch "Tabulation" # IMPORTANT
 ```cpp
-int uniquePaths(int m, int n) {
-	int dp[m][n];
-	// dp[0][0] = 1;
-	for(int i =0;i<m;i++)
-	 for(int j =0;j<n;j++)
-	 {
-		if(i==0&&j==0)dp[i][j] = 1;
-        else {
-                  int up = 0;
-                  if (i > 0)
-                    up = dp[i - 1][j];
-                  int left = 0;
-                  if (j > 0)
-                    left = dp[i][j - 1];
-                  dp[i][j] = left + up;
-             }
+ int uniquePaths(int m, int n) {
+        int dp[m][n];
+       // fill the dp array 
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (i == 0 && j == 0) dp[i][j] = 1;
+                else {
+                    int up = 0, left = 0;
+
+                    if (i > 0) up = dp[i - 1][j];
+                    if (j > 0)left = dp[i][j - 1];
+
+                    dp[i][j] = up + left;
+                }
+
+        return dp[m - 1][n - 1];
     }
-	
-	return dp[m-1][n-1];
-}
+```
+> Space optimixarion
+
+in which all time we take a prev array and cur array which reprsent the row 
+
+```cpp
+int uniquePaths(int m, int n) {
+        vector<int> prev(n, 0);
+        for (int i = 0; i < m; i++) {
+            vector<int> cur(n, 0);
+            for (int j = 0; j < n; j++) {
+                if (i == 0 && j == 0)
+                    cur[j] = 1;
+                else {
+                    int up = 0, left = 0;
+                    if (i > 0)
+                        up = prev[j];
+                    if (j > 0)
+                        left = cur[j - 1];
+                    cur[j] = up + left;
+                }
+            }
+            prev = cur;
+        }
+        return prev[n - 1];
+    }
+```
+> # Unique Paths II 
+same problem sand aproch
+
+![](./img/Unique%20Paths%20II-1.png)
+![](./img/Unique%20Paths%20II-2.png)
+> Solve using Recursion *Time limit exceeded*
+
+```cpp
+ int mod = 1e9 + 7;
+    int solve(int i, int j, vector<vector<int>>& mat) {
+        if (i == 0 && j == 0)  return 1;
+        if (i < 0 || j < 0) return 0;
+
+        if (mat[i][j] == -1) return 0;
+        int up = solve(i - 1, j, mat) % mod;
+        int left = solve(i, j - 1, mat) % mod;
+        
+        return (up + left) % mod;
+    }
+    int mazeObstacles(int n, int m, vector<vector<int>>& mat) {
+        return solve(n - 1, m - 1, mat);
+    }
+```
+> Top down approch , convert recursion code in top down
+
+```cpp
+int mod = 1e9 + 7;
+    int solve(int i, int j, vector<vector<int>>& mat, vector<vector<int>>& dp) {
+        if (i == 0 && j == 0) return 1;
+        if (i < 0 || j < 0) return 0;
+        if (mat[i][j] == -1) return 0;
+        
+        if (dp[i][j] != -1) return dp[i][j];
+
+        int up = solve(i - 1, j, mat, dp) % mod;
+        int left = solve(i, j - 1, mat, dp) % mod;
+
+        return dp[i][j] = (up + left) % mod;
+    }
+    int mazeObstacles(int n, int m, vector<vector<int>>& mat) {
+        vector<vector<int>> dp(n, vector<int>(m, -1));
+        return solve(n - 1, m - 1, mat, dp);
+    }
+```
+> bottom Up approch 
+```cpp
+int mod = 1e9 + 7;
+    int mazeObstacles(int n, int m, vector<vector<int>>& mat) {
+        
+        int dp[n][m];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                if (i == 0 && j == 0) dp[i][j] = 1;
+
+                else if (mat[i][j] == -1) dp[i][j] = 0;
+
+                else {
+                    int up = 0, left = 0;
+                    if (i > 0) up = dp[i - 1][j];
+                    if (j > 0) left = dp[i][j - 1];
+                    dp[i][j] = (up + left) % mod;
+                }
+
+        return dp[n - 1][m - 1];
+    }
+```
+> space optimization *NOT MORE IMPORTANT*
+
+```cpp
+int mod = 1e9 + 7;
+    int mazeObstacles(int n, int m, vector<vector<int>>& mat) {
+        vector<int> prev(m, 0);
+        for (int i = 0; i < n; i++) {
+            vector<int> cur(m, 0);
+            for (int j = 0; j < m; j++) {
+                if (i == 0 && j == 0) cur[j] = 1;
+                else if (mat[i][j] == -1)  cur[j] = 0;
+                else {
+                    int up = 0, left = 0;
+                    if (i > 0) up = prev[j];
+                    if (j > 0)  left = cur[j - 1];
+                    cur[j] = (up + left) % mod;
+                }
+            }
+            prev = cur;
+        }
+        return prev[m - 1];
+    }
 ```
