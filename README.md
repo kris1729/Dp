@@ -837,6 +837,27 @@ int mod = 1e9 + 7;
     }
 ```
 > bottom Up approch 
+ leet code 
+ ```cpp
+  int uniquePathsWithObstacles(vector<vector<int>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+      int  dp[n][m];
+        for(int i =0;i<n;i++){
+            for(int j =0;j<m;j++){
+                if((i==0&&j==0)&&grid[i][j]!=1)dp[i][j]=1;
+              else  if (grid[i][j]==1)dp[i][j] =0;
+                else{
+                    int up=0,left=0;
+                    if(i>0)up = dp[i-1][j];
+                    if(j>0)left  = dp[i][j-1];
+                    dp[i][j] = left + up;
+                }
+            }
+        }
+        return dp[n-1][m-1];
+    }
+```
+coding ninja
 ```cpp
 int mod = 1e9 + 7;
     int mazeObstacles(int n, int m, vector<vector<int>>& mat) {
@@ -998,4 +1019,71 @@ int minSumPath(vector<vector<int>> &grid) {
         }
         return prev[m - 1];
     }
+```
+> #  Triangle
+![](./img/Triangle.png)
+![](./img/Triangle-2.png)
+
+Approch --> when we reach the last row then return tringle[i][j] , if we go the 
+out size of tringle than return INT_MAX  , at a posisiton we can go the down or right 
+and each time we take the min of both
+
+> Recursion code
+```cpp
+ int solve(int i, int j, int n, vector<vector<int>>& triangle) {
+        if (i == n - 1) return triangle[i][j];
+        if (j > i) return INT_MAX;
+        int down = solve(i + 1, j, n, triangle);
+        int right = solve(i + 1, j + 1, n, triangle);
+
+        int ans = min(down, right);
+        if (ans != INT_MAX) ans += triangle[i][j];
+
+        return ans;
+    }
+    int minimumPathSum(vector<vector<int>>& triangle, int n) {
+        return solve(0, 0, n, triangle);
+    }
+```
+> TOP down APProch --> convert recusion code
+```cpp
+ int solve(int i, int j, int n, vector<vector<int>>& triangle, vector<int> dp[]) {
+
+        if (i == n - 1)return triangle[i][j];
+        if (j > i) return INT_MAX;
+        if (dp[i][j] != -1)return dp[i][j];
+
+        int down = solve(i + 1, j, n, triangle, dp);
+        int right = solve(i + 1, j + 1, n, triangle, dp);
+
+        int ans = min(down, right);
+        if (ans != INT_MAX) ans += triangle[i][j];
+        return dp[i][j] = ans;
+    }
+
+    int minimumPathSum(vector<vector<int>>& triangle, int n) {
+        vector<int> dp[n];
+        // fill the dp array
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < i + 1; j++)
+                dp[i].push_back(-1);
+
+        return solve(0, 0, n, triangle, dp);
+    }
+```
+> Tabulation , Bottom up APPROCH
+```cpp
+int minimumPathSum(vector<vector<int>>&arr, int n){
+	vector<vector<int>>dp(n,vector<int>(n,-1));
+	for(int i =0;i<n;i++)dp[n-1][i] = arr[n-1][i];
+
+	for(int i =n-2;i>=0;i--){
+		for(int j = i;j>=0;j--){
+			int up = arr[i][j] + dp[i+1][j];
+			int left = arr[i][j] + dp[i+1][j+1];
+			dp[i][j] = min(up,left);
+		}
+	}
+	return dp[0][0];
+}
 ```
