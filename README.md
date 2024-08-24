@@ -664,6 +664,9 @@ int ninjaTraining(int n, vector<vector<int>> &points)
 }
 ```
 > #  Unique Paths
+![](./img/Unique%20Paths-0.png)
+or
+
 ![](./img/Unique%20Paths.png)
 ![](./img/Unique%20Paths-2.png)
 Approch -> start from the end point ans go to the first (0,0) point for 
@@ -706,19 +709,18 @@ int uniquePaths(int m, int n) {
 ```cpp
  int uniquePaths(int m, int n) {
         int dp[m][n];
-       // fill the dp array 
         for (int i = 0; i < m; i++)
             for (int j = 0; j < n; j++)
-                if (i == 0 && j == 0) dp[i][j] = 1;
+                if (i == 0 && j == 0)
+                    dp[i][j] = 1;
                 else {
                     int up = 0, left = 0;
-
-                    if (i > 0) up = dp[i - 1][j];
-                    if (j > 0)left = dp[i][j - 1];
-
-                    dp[i][j] = up + left;
+                    if (i > 0)
+                        up = dp[i - 1][j];
+                    if (j > 0)
+                        left = dp[i][j - 1];
+                    dp[i][j] = left + up;
                 }
-
         return dp[m - 1][n - 1];
     }
 ```
@@ -727,7 +729,7 @@ int uniquePaths(int m, int n) {
 in which all time we take a prev array and cur array which reprsent the row 
 
 ```cpp
-int uniquePaths(int m, int n) {
+       int uniquePaths(int m, int n) {
         vector<int> prev(n, 0);
         for (int i = 0; i < m; i++) {
             vector<int> cur(n, 0);
@@ -740,7 +742,7 @@ int uniquePaths(int m, int n) {
                         up = prev[j];
                     if (j > 0)
                         left = cur[j - 1];
-                    cur[j] = up + left;
+                    cur[j] = left + up;
                 }
             }
             prev = cur;
@@ -750,10 +752,29 @@ int uniquePaths(int m, int n) {
 ```
 > # Unique Paths II 
 same problem sand aproch
-
+![](./img/Unique%20Paths%20II%20-0.png)
 ![](./img/Unique%20Paths%20II-1.png)
 ![](./img/Unique%20Paths%20II-2.png)
 > Solve using Recursion *Time limit exceeded*
+leet code 
+```cpp
+int solve(int i, int j, vector<vector<int>>& grid) {
+        if (i == 0 && j == 0 && grid[i][j] != 1)
+            return 1;
+        if (i < 0 || j < 0)
+            return 0;
+        if (grid[i][j] == 1)
+            return 0;
+        int up = solve(i - 1, j, grid);
+        int left = solve(i, j - 1, grid);
+        return (up + left);
+    }
+    int uniquePathsWithObstacles(vector<vector<int>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+        return solve(n - 1, m - 1, grid);
+    }
+```
+coding ninja 
 
 ```cpp
  int mod = 1e9 + 7;
@@ -772,6 +793,30 @@ same problem sand aproch
     }
 ```
 > Top down approch , convert recursion code in top down
+leet code
+```cpp
+public:
+    int solve(int i, int j, vector<vector<int>>& grid,vector<vector<int>>&dp) {
+        if (i == 0 && j == 0 && grid[i][j] != 1)
+            return 1;
+        if (i < 0 || j < 0)
+            return 0;
+        if (grid[i][j] == 1)
+            return 0;
+        if(dp[i][j]!=-1)return dp[i][j];
+
+        int up = solve(i - 1, j, grid,dp);
+        int left = solve(i, j - 1, grid,dp);
+
+        return dp[i][j] =  up + left;
+    }
+    int uniquePathsWithObstacles(vector<vector<int>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        return solve(n - 1, m - 1, grid,dp);
+    }
+```
+coding ninja 
 
 ```cpp
 int mod = 1e9 + 7;
