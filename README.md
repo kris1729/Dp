@@ -837,3 +837,121 @@ int mod = 1e9 + 7;
         return prev[m - 1];
     }
 ```
+> # Minimum Path Sum
+![](./img/Minimum%20Path%20Sum.png)
+Approch--> if we reach to the destiation then return the cost of destiation grid[i][j],
+if we go to bound of area then return INT_MAX , 
+for reach destination we go to right (i,j+1) or go to the bottom (i+1,j) but we take min of both
+if minimum ans != INT_MAX than we add the cost of curent position grid[i][j]
+
+
+> Recursion *TLE*
+```cpp
+#include<bits/stdc++.h>
+int solve(int i ,int j , vector<vector<int>>&grid){
+    if(i==0&&j==0)return grid[i][j];
+    if(i<0||j<0)return INT_MAX;
+    int up = solve(i-1,j,grid);
+    int left = solve(i,j-1,grid);
+    int ans = min(up,left);
+    if(ans!=INT_MAX)ans+=grid[i][j];
+    return ans;
+}
+int minSumPath(vector<vector<int>> &grid) {
+   int n = grid.size(),m = grid[0].size(); 
+   return solve(n-1,m-1,grid);
+}
+```
+or
+
+```cpp
+#include<bits/stdc++.h>
+int solve(int i ,int j ,int n ,int m, vector<vector<int>>&grid){
+    if(i==n-1&&j==m-1)return grid[i][j];
+    if(i>=n||j>=m)return INT_MAX;
+    int down = solve(i+1,j,n,m,grid);
+    int right = solve(i,j+1,n,m,grid);
+    int ans = min(down,right);
+    if(ans!=INT_MAX)ans+=grid[i][j];
+    return ans;
+}
+int minSumPath(vector<vector<int>> &grid) {
+   int n = grid.size(),m = grid[0].size(); 
+    return solve(0,0,n,m,grid);
+}
+```
+
+> convert recursion code into top down approch
+
+```cpp
+    #include <bits/stdc++.h>
+    int solve(int i, int j, vector<vector<int>>& grid, vector<vector<int>>& dp) {
+        if (i == 0 && j == 0) return grid[i][j];
+        if (i < 0 || j < 0) return INT_MAX;
+        if (dp[i][j] != -1) return dp[i][j];
+        int up = solve(i - 1, j, grid, dp);
+        int left = solve(i, j - 1, grid, dp);
+        int ans = min(up, left);
+        if (ans != INT_MAX) ans += grid[i][j];
+        return dp[i][j] = ans;
+    }
+    int minSumPath(vector<vector<int>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+        vector<vector<int>> dp(n, vector<int>(m, -1));
+        return solve(n - 1, m - 1, grid, dp);
+    }
+```
+> Bottom up approch
+```cpp
+int minSumPath(vector<vector<int>> &grid) {
+   int n = grid.size(),m = grid[0].size(); 
+   int dp[n][m];
+   for(int i =0;i<n;i++){
+       for(int j =0;j<m;j++){
+           if(i==0&&j==0)dp[i][j]=grid[i][j];
+           else {
+             int left = grid[i][j], up = grid[i][j];
+             if (j > 0)
+               left += dp[i][j - 1];
+               else left = INT_MAX;
+             if (i > 0)
+               up += dp[i - 1][j];
+             else up = INT_MAX;
+             dp[i][j] = min(up, left);
+           }
+       }
+   }
+   return dp[n-1][m-1];
+}
+```
+> space optimization
+```cpp
+    #include <bits/stdc++.h>
+    int minSumPath(vector<vector<int>>& grid) {
+
+        int n = grid.size(), m = grid[0].size();
+
+        vector<int> prev(m, 0);
+        for (int i = 0; i < n; i++) {
+            vector<int> cur(m, 0);
+            for (int j = 0; j < m; j++) {
+                if (i == 0 && j == 0)
+                    cur[j] = grid[i][j];
+                else {
+                    int left = grid[i][j], up = grid[i][j];
+                    if (j > 0)
+                        left += cur[j - 1];
+                    else
+                        left = INT_MAX;
+                    if (i > 0)
+                        up += prev[j];
+                    else
+                        up = INT_MAX;
+                    cur[j] = min(up, left);
+                }
+            }
+            prev = cur;
+        }
+        return prev[m - 1];
+    }
+```
