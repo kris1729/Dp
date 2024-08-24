@@ -751,7 +751,6 @@ in which all time we take a prev array and cur array which reprsent the row
     }
 ```
 > # Unique Paths II 
-same problem sand aproch
 ![](./img/Unique%20Paths%20II%20-0.png)
 ![](./img/Unique%20Paths%20II-1.png)
 ![](./img/Unique%20Paths%20II-2.png)
