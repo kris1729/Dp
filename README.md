@@ -1087,3 +1087,158 @@ int minimumPathSum(vector<vector<int>>&arr, int n){
 	return dp[0][0];
 }
 ```
+> space optimization
+```cpp
+ int minimumPathSum(vector<vector<int>>& arr, int n) {
+
+        vector<int> last(n, 0);
+        // fill the ground base array
+        for (int i = 0; i < n; i++)
+            last[i] = arr[n - 1][i];
+
+        for (int i = n - 2; i >= 0; i--) {
+            vector<int> cur(n, 0);
+            for (int j = i; j >= 0; j--) {
+                int up = arr[i][j] + last[j];
+                int left = arr[i][j] + last[j + 1];
+                cur[j] = min(up, left);
+            }
+            last = cur;
+        }
+        return last[0];
+    }
+```
+> #  Maximum Path Sum in the matrix
+approch-> first we start the last bottom row 's each element and , 
+form one element we can go to up side , left digonal , right digonal side
+if we reach the bound of regin than return 0 , if we reach at the first top row than return
+at particular element 
+
+> recursion code
+```cpp
+ int solve(int i, int j, vector<vector<int>>& matrix) {
+
+        if (j < 0 || j >= matrix[0].size())
+            return INT_MIN;
+        if (i == 0 )
+            return matrix[i][j];
+        int up = solve(i - 1, j, matrix);
+        int leftup = solve(i - 1, j - 1, matrix);
+        int rightup = solve(i - 1, j + 1, matrix);
+
+        int ans = max(up, max(leftup, rightup));
+        if (ans != INT_MIN)
+            ans += matrix[i][j];
+        return ans;
+    }
+
+    int getMaxPathSum(vector<vector<int>>& matrix) {
+        int ans = INT_MIN;
+        int n = matrix.size(), m = matrix[0].size();
+        for (int i = 0; i < m; i++) {
+            ans = max(ans, solve(n - 1, i, matrix));
+        }
+        return ans;
+    }
+```
+> Top down approch
+
+```cpp
+   #include <bits/stdc++.h> 
+int solve(int i, int j , vector<vector<int>>&matrix,vector<vector<int>>&dp){
+   
+    if(j<0||j>=matrix[0].size())return INT_MIN;
+      if(i==0)return matrix[i][j];
+    if(dp[i][j]!=-1)return dp[i][j];
+    int up = solve(i-1,j,matrix,dp);
+    int leftup = solve(i-1,j-1,matrix,dp);
+    int rightup = solve(i-1,j+1,matrix,dp);
+
+    int ans = max(up,max(leftup,rightup));
+    if(ans!=INT_MIN)ans+=matrix[i][j];
+    return dp[i][j] =  ans;
+}
+
+int getMaxPathSum(vector<vector<int>> &matrix)
+{
+   int ans = INT_MIN;
+   int n = matrix.size(),m=matrix[0].size();
+     vector<vector<int>>dp(n,vector<int>(m,-1));
+
+     for (int i = 0; i < m; i++) {
+       ans = max(ans, solve(n - 1, i, matrix, dp));
+     }
+     return ans;
+}
+```
+> bottom approch
+
+```cpp
+ int getMaxPathSum(vector<vector<int>>& matrix) {
+        //  int ans = INT_MIN;
+        int n = matrix.size(), m = matrix[0].size();
+        vector<vector<int>> dp(n, vector<int>(m, -1));
+
+        for (int i = 0; i < m; i++)
+            dp[n - 1][i] = matrix[n - 1][i];
+
+        for (int i = n - 2; i >= 0; i--) {
+            for (int j = m - 1; j >= 0; j--) {
+                int down = 0, leftdown = 0, rightdown = 0;
+                if (i < n - 1)
+                    down += dp[i + 1][j];
+                else
+                    down = INT_MIN;
+                if (i < n - 1 && j > 0)
+                    leftdown += dp[i + 1][j - 1];
+                else
+                    leftdown = INT_MIN;
+                if (i < n - 1 && j < m - 1)
+                    rightdown += dp[i + 1][j + 1];
+                else
+                    rightdown = INT_MIN;
+                dp[i][j] = matrix[i][j] + max(down, max(leftdown, rightdown));
+            }
+        }
+
+        int ans = INT_MIN;
+        for (int i = 0; i < m; i++) {
+            ans = max(ans, dp[0][i]);
+        }
+        return ans;
+    }
+```
+> space optimization
+```cpp
+ int getMaxPathSum(vector<vector<int>> &matrix)
+{
+
+   int n = matrix.size(),m=matrix[0].size();
+    // pre coumute for last row
+    vector<int>prev(m,0);
+     for(int i =0;i<m;i++)prev[i] = matrix[n-1][i];
+    
+    // cur roe which is before the last row
+     for(int i = n-2;i>=0;i--){
+         vector<int>cur(m,0);
+         for(int j = m-1;j>=0;j--){
+          int down=0,leftdown=0,rightdown=0;
+          if(i<n-1)  down += prev[j];
+          else down = INT_MIN;
+          if(i<n-1&&j>0)leftdown += prev[j-1];
+          else leftdown = INT_MIN;
+          if(i<n-1&&j<m-1)  rightdown += prev[j+1];
+          else rightdown = INT_MIN;
+
+          cur[j] = max(down,max(leftdown,rightdown))+matrix[i][j];
+         }
+         prev = cur;
+     }
+ 
+ int ans = INT_MIN;
+ for(int i =0;i<m;i++)
+     ans = max(ans,prev[i]);
+ 
+   return ans;
+}
+```
