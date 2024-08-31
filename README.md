@@ -1242,3 +1242,148 @@ int getMaxPathSum(vector<vector<int>> &matrix)
    return ans;
 }
 ```
+---
+last proble mon dp grid
+3D dp consept
+> # Chocolate Pickup #complex And IMPORTANT 
+![](./img/Chocolate%20Pickup-1.png)
+![](./img/Chocolate%20Pickup-2.png)
+fixed starting point,
+varible ending point so start from starting point
+note , allic and bob run togather due to common cell
+steps.
+1. express every thing in allic (i1,j1) and bob (i2,j2)
+2. explore all path
+
+Function(0,0,0,c-1)  (0,0)for allic and (0,c-1)for bob
+
+> recursion code
+```cpp
+int solve(int i , int j1 ,int j2 ,int r , int c,vector<vector<int>>&grid){
+    // base case 
+    if(j1<0||j1>=c||j2<0||j2>=c)return -1e8;
+    if(i==r-1){
+        if(j1==j2)return grid[i][j1];
+        else return grid[i][j1] + grid[i][j2];
+    }
+    // recursion calling in all possible direction
+    // they can travel possible 9th direction
+    int maxi = -1e8;
+   for(int d1 =-1;d1<=1;d1++)
+   for(int d2 = -1;d2<=1;d2++){
+       int value =0;
+       if(j1==j2)value += grid[i][j1];
+       else value += grid[i][j1] + grid[i][j2];
+      
+      value += solve(i+1,j1+d1,j2+d2,r,c,grid);
+
+      maxi = max(maxi,value);
+      
+   }
+   return maxi;
+}
+
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+    
+
+  int ans = solve(0,0,c-1, r , c , grid); // alice start(i,0), bob (i,c-1)
+  return ans;
+}
+```
+
+> 3D VECTOR
+
+
+dieclear 3D vector like dp[r][c][c] type
+```cpp
+vector<vector<vector<int>>>dp(r,vector<vector<int>>(c,vector<int>(c,-1)));
+```
+
+
+
+> solve using top down approch 
+
+```cpp
+int solve(int i , int j1 ,int j2 ,int r , int c,vector<vector<int>>&grid,vector<vector<vector<int>>>&dp){
+    // base case 
+    if(j1<0||j1>=c||j2<0||j2>=c)return -1e8;
+    if(i==r-1){
+        if(j1==j2)return grid[i][j1];
+        else return grid[i][j1] + grid[i][j2];
+    }
+    // recursion calling in all possible direction
+    if(dp[i][j1][j2]!=-1)return dp[i][j1][j2];
+    int maxi = -1e8;
+   for(int d1 =-1;d1<=1;d1++)
+   for(int d2 = -1;d2<=1;d2++){
+       int value =0;
+       if(j1==j2)value += grid[i][j1];
+       else value += grid[i][j1] + grid[i][j2];
+      
+      value += solve(i+1,j1+d1,j2+d2,r,c,grid,dp);
+
+      maxi = max(maxi,value);
+      
+   }
+   return dp[i][j1][j2] = maxi;
+}
+
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+// dp[r][c][c]
+ vector<vector<vector<int>>>dp(r,vector<vector<int>>(c,vector<int>(c,-1)));
+  int ans = solve(0,0,c-1, r , c , grid,dp);
+  return ans;
+}
+```
+> Using tabulation Bottom Up approch
+
+```cpp
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+    // bottom up approch
+    vector<vector<vector<int>>>dp(r,vector<vector<int>>(c,vector<int>(c,0)));
+ 
+//  fill the dp for i = r-1 for base case
+// A and B end at the last row A and be  (0...c) col or B can be (0....c)
+for(int j1 =0;j1<c;j1++)
+for(int j2 =0;j2<c;j2++){
+    if(j1==j2)
+    dp[r-1][j1][j2] = grid[r-1][j1];
+    else
+    dp[r-1][j1][j2] = grid[r-1][j1] + grid[r-1][j2];
+}
+
+// tabulation
+// row can go to last to first and col can be any thing for (i,j1,j2)
+for(int i = r-2;i>=0;i--)
+for(int j1=0;j1<c;j1++)
+for(int j2 =0;j2<c;j2++){
+
+int maxi = -1e8;
+for(int d1 =-1;d1<=1;d1++){
+  for (int d2 = -1; d2 <= 1; d2++) {
+    int value = 0;
+    if (j1 == j2)
+      value = grid[i][j1];
+    else
+      value = grid[i][j1] + grid[i][j2];
+    if (j1 + d1 >= 0 && j1 + d1 < c && j2 + d2 >= 0 && j2 + d2 < c)
+      value += dp[i+1][j1 + d1][j2 + d2];
+    else
+      value += -1e8;
+
+    maxi = max(maxi, value);
+  }
+}
+dp[i][j1][j2] = maxi;
+
+
+}
+
+return dp[0][0][c-1];
+  
+}
+```
+space can be also applied using 2 D dp
+---
+
+# 
